@@ -17,10 +17,10 @@ module Koudoku
         "half-year"
       when "3-month"
         "quarter"
-      else 
+      else
         "month"
       end
     end
-    
+
   end
 end
