@@ -49,7 +49,7 @@ module Koudoku
 
     def load_subscription
       ownership_attribute = :"#{Koudoku.subscriptions_owned_by}_id"
-      @subscription = ::Subscription.where(ownership_attribute => current_owner.id).find_by_id(params[:id])
+      @subscription = ::Subscription.where(ownership_attribute => current_owner.id).find_by(id: params[:id])
       return @subscription.present? ? @subscription : unauthorized
     end
 
