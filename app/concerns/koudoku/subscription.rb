@@ -82,8 +82,16 @@ module Koudoku::Subscription
 
               customer_attributes[:coupon] = @coupon_code if @coupon_code
 
-              # create a customer at that package level.
-              customer = Stripe::Customer.create(customer_attributes)
+              # create a customer at that package level or fetch customer.
+              if subscription_owner.stripe_id?
+                customer = Stripe::Customer.retrieve(subscription_owner.stripe_id)
+                customer.source = credit_card_token
+                customer.email = subscription_owner_email
+                customer.description = subscription_owner_description
+                customer.save
+              else
+                customer = Stripe::Customer.create(customer_attributes)
+              end
 
               finalize_new_customer!(customer.id, plan.price)
               customer.update_subscription(:plan => self.plan.stripe_id, :prorate => Koudoku.prorate)
