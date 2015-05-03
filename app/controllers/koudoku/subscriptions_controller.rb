@@ -142,6 +142,10 @@ module Koudoku
     end
 
     def update
+      params[:subscription].each do |key, value|
+        (value == 'undefined' || value == '' || value == 'null') ? params[:subscription][key] = nil : ''
+      end
+
       if @subscription.update_attributes(subscription_params)
         flash[:notice] = "Sie haben Ihren Plan erfolgreich aktualisiert."
         redirect_to owner_subscription_path(@owner, @subscription)
