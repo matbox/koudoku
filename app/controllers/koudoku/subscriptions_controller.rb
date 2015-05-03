@@ -118,7 +118,7 @@ module Koudoku
       params[:subscription].each do |key, value|
         (value == 'undefined' || value == '' || value == 'null') ? params[:subscription][key] = nil : ''
       end
-      
+
       @subscription = ::Subscription.new(subscription_params)
       @subscription.subscription_owner = @owner
       @subscription.coupon_code = session[:koudoku_coupon_code]
