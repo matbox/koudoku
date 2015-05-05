@@ -127,8 +127,8 @@ module Koudoku
         flash[:notice] = after_new_subscription_message
         redirect_to after_new_subscription_path
       else
-        flash[:error] = 'Es gab ein Problem mit dieser Transaktion.'
-        render :new
+        flash[:alert] = 'Ihre Kreditkarte wurde abgewiesen. Bitte nutzen Sie eine andere Kreditkarte oder nehmen Sie mit Ihrem Zahlungsinstitut Kontakt auf.'
+        redirect_to new_owner_subscription_path(@owner, plan: subscription_params[:plan_id])
       end
     end
 
