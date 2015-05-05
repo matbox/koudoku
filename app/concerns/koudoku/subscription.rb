@@ -129,13 +129,26 @@ module Koudoku::Subscription
 
         prepare_for_card_update
 
-        # fetch the customer.
-        customer = Stripe::Customer.retrieve(self.stripe_id)
-        customer.source = self.credit_card_token
-        customer.save
+        begin
 
-        # update the last four based on this new card.
-        self.last_four = customer.sources.retrieve(customer.default_source).last4
+          # fetch the customer.
+          customer = Stripe::Customer.retrieve(self.stripe_id)
+          customer.source = self.credit_card_token
+          customer.save
+          success=true
+
+        rescue Stripe::CardError => card_error
+          errors[:base] << card_error.message
+          card_was_declined
+          success=false
+          return false
+        end
+
+        if success
+          # update the last four based on this new card.
+          self.last_four = customer.sources.retrieve(customer.default_source).last4
+        end
+
         finalize_card_update!
 
       end

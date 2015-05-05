@@ -154,8 +154,8 @@ module Koudoku
         flash[:notice] = "Sie haben Ihren Plan erfolgreich aktualisiert."
         redirect_to owner_subscription_path(@owner, @subscription)
       else
-        flash[:error] = 'Es gab ein Problem mit dieser Transaktion.'
-        render :edit
+        flash[:alert] = 'Die Karte wurde abgewiesen. Bitte nutzen Sie eine andere Kreditkarte oder nehmen Sie mit Ihrem Zahlungsinstitut Kontakt auf.'
+        redirect_to edit_owner_subscription_path(@owner, @subscription, update: 'source')
       end
     end
 
