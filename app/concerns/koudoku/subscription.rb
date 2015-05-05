@@ -27,17 +27,24 @@ module Koudoku::Subscription
           # if a new plan has been selected
           if self.plan.present?
 
-            # Record the new plan pricing.
-            self.current_price = self.plan.price
+            begin
+              # Record the new plan pricing.
+              self.current_price = self.plan.price
 
-            prepare_for_downgrade if downgrading?
-            prepare_for_upgrade if upgrading?
+              prepare_for_downgrade if downgrading?
+              prepare_for_upgrade if upgrading?
 
-            # update the package level with stripe.
-            customer.update_subscription(:plan => self.plan.stripe_id, :prorate => Koudoku.prorate)
+              # update the package level with stripe.
+              customer.update_subscription(:plan => self.plan.stripe_id, :prorate => Koudoku.prorate)
 
-            finalize_downgrade! if downgrading?
-            finalize_upgrade! if upgrading?
+              finalize_downgrade! if downgrading?
+              finalize_upgrade! if upgrading?
+
+            rescue Stripe::CardError => card_error
+              errors[:base] << card_error.message
+              card_was_declined
+              return false
+            end
 
           # if no plan has been selected.
           else
@@ -135,19 +142,15 @@ module Koudoku::Subscription
           customer = Stripe::Customer.retrieve(self.stripe_id)
           customer.source = self.credit_card_token
           customer.save
-          success=true
 
         rescue Stripe::CardError => card_error
           errors[:base] << card_error.message
           card_was_declined
-          success=false
           return false
         end
 
-        if success
-          # update the last four based on this new card.
-          self.last_four = customer.sources.retrieve(customer.default_source).last4
-        end
+        # update the last four based on this new card.
+        self.last_four = customer.sources.retrieve(customer.default_source).last4
 
         finalize_card_update!
 
