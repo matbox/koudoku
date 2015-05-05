@@ -30,6 +30,8 @@ module Koudoku::Subscription
             begin
               # Record the new plan pricing.
               self.current_price = self.plan.price
+              self.blogs_allowed = self.plan.blogs_allowed
+              self.posts_allowed = self.plan.posts_allowed
 
               prepare_for_downgrade if downgrading?
               prepare_for_upgrade if upgrading?
@@ -53,6 +55,8 @@ module Koudoku::Subscription
 
             # Remove the current pricing.
             self.current_price = nil
+            self.posts_allowed = nil
+            self.blogs_allowed = nil
 
             # delete the subscription.
             customer.cancel_subscription
@@ -68,6 +72,8 @@ module Koudoku::Subscription
 
             # Record the new plan pricing.
             self.current_price = self.plan.price
+            self.blogs_allowed = self.plan.blogs_allowed
+            self.posts_allowed = self.plan.posts_allowed
 
             prepare_for_new_subscription
             prepare_for_upgrade
@@ -124,6 +130,8 @@ module Koudoku::Subscription
 
             # Remove any plan pricing.
             self.current_price = nil
+            self.posts_allowed = nil
+            self.blogs_allowed = nil
 
           end
 
