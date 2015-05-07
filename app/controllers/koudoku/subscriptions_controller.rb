@@ -105,6 +105,17 @@ module Koudoku
       else
         @subscription = ::Subscription.new
         @subscription.plan = ::Plan.find(params[:plan])
+
+        # create subscription & customer if free trial w/o credit card
+        if @subscription.plan.trial_period>0
+          @subscription.subscription_owner = @owner
+          @subscription.coupon_code = session[:koudoku_coupon_code]
+          if @subscription.save
+            flash[:notice] = "Sie testen den Plan bis zum #{(Time.now.in_time_zone("Berlin") + @subscription.plan.trial_period.days).to_date.strftime('%d.%m.%Y')}."
+            redirect_to after_new_subscription_path
+          end
+        end
+
       end
     end
 
