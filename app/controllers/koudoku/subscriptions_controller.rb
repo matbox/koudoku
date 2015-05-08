@@ -150,6 +150,7 @@ module Koudoku
       flash[:notice] = "Sie haben Ihren Plan erfolgreich gekündigt."
       @subscription.plan_id = nil
       @subscription.save
+      @subscription.destroy
       redirect_to owner_subscription_path(@owner, @subscription)
     end
 

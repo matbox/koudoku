@@ -98,7 +98,7 @@ module Koudoku::Subscription
               # create a customer at that package level or fetch customer.
               if subscription_owner.stripe_id?
                 customer = Stripe::Customer.retrieve(subscription_owner.stripe_id)
-                customer.source = credit_card_token
+                customer.source = credit_card_token if credit_card_token
                 customer.email = subscription_owner_email
                 customer.description = subscription_owner_description
                 customer.save
