@@ -151,7 +151,7 @@ module Koudoku
       @subscription.plan_id = nil
       @subscription.save
       @subscription.destroy
-      redirect_to owner_subscription_path(@owner, @subscription)
+      redirect_to '/my/profile'
     end
 
     def edit
