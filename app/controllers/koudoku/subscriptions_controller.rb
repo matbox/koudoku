@@ -167,7 +167,7 @@ module Koudoku
       end
 
       if @subscription.update_attributes(subscription_params)
-        flash[:notice] = "Sie haben Ihren Plan erfolgreich aktualisiert."
+        flash[:notice] = "Aktualisierung erfolgreich."
         redirect_to owner_subscription_path(@owner, @subscription)
       else
         flash[:alert] = 'Ihre Kreditkarte wurde abgewiesen. Bitte nutzen Sie eine andere Kreditkarte oder nehmen Sie mit Ihrem Zahlungsinstitut Kontakt auf.'
