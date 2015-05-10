@@ -8,17 +8,17 @@ module Koudoku
     def plan_interval(plan)
       case plan.interval
       when "Monat"
-        "month"
+        "Monat"
       when "Jahr"
-        "year"
+        "Jahr"
       when "Woche"
-        "week"
+        "Woche"
       when "Halbjährig"
-        "half-year"
+        "Halbjährig"
       when "Vierteljährlich"
-        "quarter"
+        "Vierteljährlich"
       else
-        "month"
+        "Monat"
       end
     end
 
