@@ -107,7 +107,7 @@ module Koudoku
         @subscription.plan = ::Plan.find(params[:plan])
 
         # create subscription & customer if free trial/plan w/o credit card
-        if (@subscription.plan.trial_period>0 || @subscription.plan.price==0) && !@owner.finished_trials.include?(@subscription.stripe_id)
+        if (@subscription.plan.trial_period>0 || @subscription.plan.price==0) && !@owner.finished_trials.include?(@subscription.plan.stripe_id)
           @subscription.subscription_owner = @owner
           @subscription.coupon_code = session[:koudoku_coupon_code]
           if @subscription.save
