@@ -180,7 +180,7 @@ module Koudoku
 
       # If strong_parameters is around, use that.
       if defined?(ActionController::StrongParameters)
-        params.require(:subscription).permit(:plan_id, :stripe_id, :blogs_allowed, :posts_allowed, :current_price, :credit_card_token, :card_type, :last_four, :name, :address_line1, :address_line2, :address_city, :address_zip)
+        params.require(:subscription).permit(:trial_start, :trial_end, :current_period_start, :current_period_end, :plan_id, :stripe_id, :blogs_allowed, :posts_allowed, :current_price, :credit_card_token, :card_type, :last_four, :name, :address_line1, :address_line2, :address_city, :address_zip)
       else
         # Otherwise, let's hope they're using attr_accessible to protect their models!
         params[:subscription]
