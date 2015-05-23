@@ -38,7 +38,7 @@ module Koudoku::Subscription
 
               # update the package level with stripe.
               # if user had trial before, don't give him another one
-              if self.user.finished_trials.include?(self.plan.stripe_id)
+              if self.user.finished_trials.include?(self.plan.id.to_s)
                 customer.update_subscription(:trial_end => 'now', :plan => self.plan.stripe_id, :prorate => Koudoku.prorate)
               else
                 customer.update_subscription(:plan => self.plan.stripe_id, :prorate => Koudoku.prorate)
@@ -113,7 +113,7 @@ module Koudoku::Subscription
 
               finalize_new_customer!(customer.id, plan.price)
 
-              if self.user.finished_trials.include?(self.plan.stripe_id)
+              if self.user.finished_trials.include?(self.plan.id.to_s)
                 customer.update_subscription(:trial_end => 'now', :plan => self.plan.stripe_id, :prorate => Koudoku.prorate)
               else
                 customer.update_subscription(:plan => self.plan.stripe_id, :prorate => Koudoku.prorate)

@@ -107,7 +107,7 @@ module Koudoku
         @subscription.plan = ::Plan.find(params[:plan])
 
         # create subscription & customer if free trial/plan w/o credit card
-        if (@subscription.plan.trial_period>0 || @subscription.plan.price==0) && !@owner.finished_trials.include?(@subscription.plan.stripe_id)
+        if (@subscription.plan.trial_period>0 || @subscription.plan.price==0) && !@owner.finished_trials.include?(@subscription.plan.id.to_s)
           @subscription.subscription_owner = @owner
           @subscription.coupon_code = session[:koudoku_coupon_code]
           if @subscription.save
@@ -166,11 +166,19 @@ module Koudoku
         (value == 'undefined' || value == '' || value == 'null') ? params[:subscription][key] = nil : ''
       end
 
+      # redirect to card in case the customer already used his trials
+      if @owner.finished_trials.include?(params[:subscription]['plan_id'])
+        @subscription = ::Subscription.new
+        @subscription.plan = ::Plan.find(params[:subscription]['plan_id'])
+        @subscription.subscription_owner = @owner
+        render '_card', :locals => {title: "Plan aktualisieren", url: owner_subscriptions_path(@owner)} and return
+      end
+
       if @subscription.update_attributes(subscription_params)
         flash[:notice] = "Aktualisierung erfolgreich."
         redirect_to owner_subscription_path(@owner, @subscription)
       else
-        flash[:alert] = 'Ihre Kreditkarte wurde abgewiesen. Bitte nutzen Sie eine andere Kreditkarte oder nehmen Sie mit Ihrem Zahlungsinstitut Kontakt auf.'
+        flash[:alert] = 'Ihre Kreditkarte wurde abgewiesen. Bitte nutzen Sie eine andere Kreditkarte oder nehmen Sie mit Ihrem Finanzinstitut Kontakt auf.'
         redirect_to edit_owner_subscription_path(@owner, @subscription, update: 'source')
       end
     end
