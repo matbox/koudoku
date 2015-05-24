@@ -47,10 +47,13 @@ module Koudoku::Subscription
               finalize_downgrade! if downgrading?
               finalize_upgrade! if upgrading?
 
-            rescue Stripe::CardError => card_error
-              errors[:base] << card_error.message
-              card_was_declined
-              return false
+            rescue Stripe::CardError => e
+              case e.class
+                when Stripe::CardError
+                  errors[:base] << e.message
+                  card_was_declined
+                  return false
+              end
             end
 
           # if no plan has been selected.

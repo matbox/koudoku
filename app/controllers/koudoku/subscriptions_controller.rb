@@ -124,7 +124,7 @@ module Koudoku
     end
 
     def show_existing_subscription
-      if @owner.subscription.present?
+      if @owner.subscription.present? && !(@owner.finished_trials.include?(params[:plan]) || (params[:subscription] && @owner.finished_trials.include?(params[:subscription]['plan_id'])))
         redirect_to owner_subscription_path(@owner, @owner.subscription)
       end
     end
@@ -132,6 +132,11 @@ module Koudoku
     def create
       params[:subscription].each do |key, value|
         (value == 'undefined' || value == '' || value == 'null') ? params[:subscription][key] = nil : ''
+      end
+
+      #remove subscription if alreadt present (if chosing plan which doesn't have a trial anymore)
+      if @owner.subscription.present?
+        @owner.subscription.destroy
       end
 
       @subscription = ::Subscription.new(subscription_params)
@@ -164,14 +169,6 @@ module Koudoku
     def update
       params[:subscription].each do |key, value|
         (value == 'undefined' || value == '' || value == 'null') ? params[:subscription][key] = nil : ''
-      end
-
-      # redirect to card in case the customer already used his trials
-      if @owner.finished_trials.include?(params[:subscription]['plan_id'])
-        @subscription = ::Subscription.new
-        @subscription.plan = ::Plan.find(params[:subscription]['plan_id'])
-        @subscription.subscription_owner = @owner
-        render '_card', :locals => {title: "Plan aktualisieren", url: owner_subscriptions_path(@owner)} and return
       end
 
       if @subscription.update_attributes(subscription_params)
